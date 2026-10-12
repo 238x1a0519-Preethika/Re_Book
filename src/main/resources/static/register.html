@@ -1,0 +1,109 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | ReBook</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <nav class="navbar">
+            <a href="index.html" class="logo">ReBook<span>.</span></a>
+            <a href="index.html">Back to Home</a>
+        </nav>
+    </header>
+
+    <section class="auth-section">
+        <div class="auth-card">
+            <h1>Create Account</h1>
+            <p>Join ReBook and share books with other students.</p>
+
+            <form id="registerForm">
+                <label for="fullName">Full Name</label>
+                <input type="text" id="fullName" name="fullName"
+                       placeholder="Enter your full name" required>
+
+                <label for="email">Email Address</label>
+                <input type="email" id="email" name="email"
+                       placeholder="Enter your email" required>
+
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password"
+                       placeholder="At least 8 characters"
+                       minlength="8" maxlength="72" required>
+
+                <button type="submit" class="auth-button">
+                    Register
+                </button>
+
+                <p id="message" role="status" aria-live="polite"></p>
+            </form>
+
+            <p class="auth-footer">
+                Already have an account?
+                <a href="login.html">Login here</a>
+            </p>
+        </div>
+    </section>
+
+    <script>
+        document.getElementById("registerForm").addEventListener(
+            "submit", async function(event) {
+                event.preventDefault();
+
+                const fullName =
+                    document.getElementById("fullName").value.trim();
+                const email =
+                    document.getElementById("email").value.trim();
+                const password =
+                    document.getElementById("password").value;
+                const message =
+                    document.getElementById("message");
+
+                message.style.color = "inherit";
+                message.textContent = "Creating your account...";
+
+                try {
+                    const response = await fetch("/api/auth/register", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({
+                            fullName: fullName,
+                            email: email,
+                            password: password
+                        })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        message.style.color = "green";
+                        message.textContent =
+                            "Registration successful! Redirecting to login...";
+
+                        document.getElementById("registerForm").reset();
+
+                        setTimeout(() => {
+                            window.location.href = "login.html";
+                        }, 1500);
+                    } else {
+                        message.style.color = "red";
+                        message.textContent =
+                            data.message || "Registration failed. Please check your details.";
+                    }
+                } catch (error) {
+                    message.style.color = "red";
+                    message.textContent =
+                        "Cannot connect to ReBook. Check that the backend is running.";
+                }
+            }
+        );
+    </script>
+
+</body>
+</html>

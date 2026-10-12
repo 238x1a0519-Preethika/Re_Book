@@ -1,0 +1,474 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Browse Items - ReBook</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 0; font-family: Arial, sans-serif; background: #f3f6f4; color: #24352c; }
+        header { background: #176b4d; color: white; padding: 18px 7%; display: flex; justify-content: space-between; align-items: center; gap: 14px; flex-wrap: wrap; }
+        .logo { font-size: 26px; font-weight: bold; }
+        nav { display: flex; gap: 16px; flex-wrap: wrap; }
+        nav a { color: white; text-decoration: none; }
+        nav a:hover { text-decoration: underline; }
+        .hero { background: #dcefe5; text-align: center; padding: 38px 20px; }
+        .hero h1 { color: #176b4d; font-size: 32px; margin: 0 0 12px; }
+        .hero p { color: #52665a; line-height: 1.6; margin: 0; }
+        main { max-width: 1150px; margin: 30px auto; padding: 0 20px; }
+        .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 15px; flex-wrap: wrap; margin-bottom: 22px; }
+        .toolbar h2 { color: #176b4d; margin: 0; }
+        .toolbar-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .button { display: inline-block; background: #176b4d; color: white; border: none; border-radius: 7px; padding: 11px 16px; text-decoration: none; cursor: pointer; font-size: 14px; }
+        .button:hover { background: #10543b; }
+        .button:disabled { opacity: .6; cursor: not-allowed; }
+        .search { width: 100%; max-width: 500px; padding: 12px; border: 1px solid #ccd7d0; border-radius: 8px; font-size: 15px; margin-bottom: 24px; }
+        .filters { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+        .filters button { padding: 9px 15px; border: 1px solid #b8cfc2; border-radius: 20px; background: white; color: #176b4d; cursor: pointer; }
+        .filters button.active { background: #176b4d; color: white; border-color: #176b4d; }
+        .items-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(245px, 1fr)); gap: 22px; }
+        .item-card { background: white; border-radius: 13px; padding: 22px; box-shadow: 0 4px 15px rgba(0,0,0,.06); display: flex; flex-direction: column; overflow-wrap: anywhere; }
+        .item-icon { font-size: 38px; margin-bottom: 12px; }
+        .badges { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 13px; }
+        .badge { display: inline-block; padding: 6px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .category { background: #dcefe5; color: #176b4d; }
+        .donate { background: #e3f5e8; color: #187443; }
+        .exchange { background: #e3eeff; color: #245db5; }
+        .sell { background: #fff0d9; color: #945300; }
+        .condition { background: #f0e8ff; color: #6741a5; }
+        .item-card h3 { margin: 0 0 12px; font-size: 20px; }
+        .description { color: #68756d; line-height: 1.5; flex-grow: 1; white-space: pre-wrap; }
+        .exchange-details { margin-top: 12px; padding: 11px; border-radius: 8px; background: #f0f5ff; color: #24518c; line-height: 1.5; }
+        .price { color: #176b4d; font-size: 21px; font-weight: bold; margin-top: 18px; }
+        .contact-button { margin-top: 18px; width: 100%; }
+        .message { text-align: center; padding: 35px 15px; color: #68756d; line-height: 1.6; }
+        .error { color: #b42318; }
+        .success { color: #176b4d; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 10; }
+        .modal.open { display: flex; }
+        .chat-box { width: 100%; max-width: 520px; max-height: 85vh; background: white; border-radius: 14px; display: flex; flex-direction: column; overflow: hidden; }
+        .chat-header { background: #176b4d; color: white; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+        .chat-header h2 { margin: 0; font-size: 19px; }
+        .close-button { background: transparent; color: white; border: 0; font-size: 26px; cursor: pointer; }
+        .chat-messages { padding: 16px; overflow-y: auto; min-height: 180px; max-height: 45vh; background: #f7faf8; }
+        .chat-message { padding: 10px 12px; border-radius: 10px; margin-bottom: 10px; max-width: 85%; white-space: pre-wrap; overflow-wrap: anywhere; }
+        .chat-message.mine { margin-left: auto; background: #dcefe5; }
+        .chat-message.theirs { background: white; border: 1px solid #e0e7e2; }
+        .chat-message small { display: block; color: #65746a; margin-top: 6px; font-size: 11px; }
+        .chat-form { padding: 14px; border-top: 1px solid #e0e7e2; }
+        .chat-form textarea { width: 100%; min-height: 80px; resize: vertical; border: 1px solid #ccd7d0; border-radius: 8px; padding: 11px; font: inherit; }
+        .chat-form .button { margin-top: 10px; }
+        .chat-status { font-size: 13px; margin: 8px 0 0; }
+        footer { text-align: center; color: #77847c; padding: 25px 15px; }
+        @media (max-width: 550px) { .hero h1 { font-size: 26px; } header { padding: 16px 5%; } }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">📚 ReBook</div>
+    <nav>
+        <a href="/profile.html">My Profile</a>
+        <a href="/add-book.html">Add Item</a>
+        <a href="/login.html">Login</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Discover Books &amp; Study Supplies</h1>
+    <p>Donate, exchange, or sell study materials within your student community.</p>
+</section>
+
+<main>
+    <div class="toolbar">
+        <h2>Available Items</h2>
+        <div class="toolbar-actions">
+            <button class="button" id="refreshButton" type="button">Refresh</button>
+            <a class="button" href="/add-book.html">+ Add Item</a>
+        </div>
+    </div>
+
+    <input type="search" class="search" id="searchInput"
+           placeholder="Search by name, category, condition or description..."
+           aria-label="Search items">
+
+    <div class="filters" aria-label="Filter by listing type">
+        <button type="button" class="active" data-filter="ALL">All Items</button>
+        <button type="button" data-filter="DONATE">Donate</button>
+        <button type="button" data-filter="EXCHANGE">Exchange</button>
+        <button type="button" data-filter="SELL">Sell</button>
+    </div>
+
+    <div id="itemsGrid" class="items-grid"></div>
+    <p id="message" class="message" role="status" aria-live="polite">Loading items...</p>
+</main>
+
+<div id="chatModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="chatTitle">
+    <section class="chat-box">
+        <div class="chat-header">
+            <h2 id="chatTitle">Contact Student</h2>
+            <button id="closeChat" class="close-button" type="button" aria-label="Close chat">×</button>
+        </div>
+        <div id="chatMessages" class="chat-messages" aria-live="polite"></div>
+        <form id="chatForm" class="chat-form">
+            <textarea id="chatInput" maxlength="2000" required placeholder="Write your message..."></textarea>
+            <button id="sendButton" class="button" type="submit">Send Message</button>
+            <p id="chatStatus" class="chat-status" role="status"></p>
+        </form>
+    </section>
+</div>
+
+<footer>© 2026 ReBook — Share Books, Save Money, Help Students.</footer>
+
+<script>
+    let allItems = [];
+    let activeFilter = "ALL";
+    let currentItem = null;
+    let currentUserId = null;
+
+    const itemsGrid = document.getElementById("itemsGrid");
+    const message = document.getElementById("message");
+    const searchInput = document.getElementById("searchInput");
+    const chatModal = document.getElementById("chatModal");
+    const chatMessages = document.getElementById("chatMessages");
+    const chatInput = document.getElementById("chatInput");
+    const chatStatus = document.getElementById("chatStatus");
+    const sendButton = document.getElementById("sendButton");
+
+    function getItemValue(item, names) {
+        for (const name of names) {
+            if (item[name] !== undefined && item[name] !== null) return item[name];
+        }
+        return null;
+    }
+
+    function createTextElement(tag, className, value) {
+        const element = document.createElement(tag);
+        if (className) element.className = className;
+        element.textContent = value;
+        return element;
+    }
+
+    function formatPrice(value) {
+        const amount = Number(value);
+        if (!Number.isFinite(amount)) return "Price not specified";
+        return "₹" + amount.toLocaleString("en-IN", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        });
+    }
+
+    function formatDate(value) {
+        if (!value) return "";
+        const date = new Date(value);
+        return Number.isNaN(date.getTime()) ? "" : date.toLocaleString();
+    }
+
+    async function loadCurrentUser() {
+        try {
+            const response = await fetch("/api/profile", {
+                credentials: "same-origin",
+                cache: "no-store"
+            });
+            if (!response.ok) return;
+            const profile = await response.json();
+            currentUserId = profile.id ?? profile.userId ?? null;
+        } catch (_) {
+            currentUserId = null;
+        }
+    }
+
+    function displayItems(items) {
+        itemsGrid.replaceChildren();
+
+        if (items.length === 0) {
+            message.textContent = allItems.length === 0
+                ? "No items have been added yet. Be the first to share a book!"
+                : "No items match your search or selected filter.";
+            message.classList.remove("error");
+            message.style.display = "block";
+            return;
+        }
+
+        message.style.display = "none";
+
+        items.forEach(item => {
+            const title = String(getItemValue(item, ["title", "name", "itemName"]) || "Untitled item");
+            const category = String(getItemValue(item, ["category"]) || "Other");
+            const description = String(getItemValue(item, ["description", "details"]) || "No description provided.");
+            const condition = String(getItemValue(item, ["itemCondition"]) || "");
+            const listingType = String(getItemValue(item, ["listingType"]) || "DONATE").toUpperCase();
+            const priceValue = getItemValue(item, ["price"]);
+            const exchangeFor = String(getItemValue(item, ["exchangeFor"]) || "");
+            const itemId = getItemValue(item, ["id"]);
+            const ownerId = getItemValue(item, ["ownerId", "owner_id"]);
+
+            const card = document.createElement("article");
+            card.className = "item-card";
+            card.appendChild(createTextElement("div", "item-icon", "📘"));
+
+            const badges = document.createElement("div");
+            badges.className = "badges";
+            badges.appendChild(createTextElement("span", "badge category", category));
+
+            if (condition) badges.appendChild(createTextElement("span", "badge condition", condition));
+
+            let typeLabel = "Donate";
+            let typeClass = "badge donate";
+            if (listingType === "EXCHANGE") {
+                typeLabel = "Exchange";
+                typeClass = "badge exchange";
+            } else if (listingType === "SELL") {
+                typeLabel = "For Sale";
+                typeClass = "badge sell";
+            }
+
+            badges.appendChild(createTextElement("span", typeClass, typeLabel));
+            card.appendChild(badges);
+            card.appendChild(createTextElement("h3", "", title));
+            card.appendChild(createTextElement("p", "description", description));
+
+            if (listingType === "SELL") {
+                const validPrice = priceValue !== null &&
+                    priceValue !== "" &&
+                    Number.isFinite(Number(priceValue)) &&
+                    Number(priceValue) > 0;
+                card.appendChild(createTextElement(
+                    "div", "price",
+                    validPrice ? formatPrice(priceValue) : "Price not specified"
+                ));
+            } else if (listingType === "EXCHANGE") {
+                card.appendChild(createTextElement(
+                    "div", "exchange-details",
+                    exchangeFor ? "🔄 Looking for: " + exchangeFor : "🔄 Exchange item — details not specified."
+                ));
+            } else {
+                card.appendChild(createTextElement("div", "price", "Free"));
+            }
+
+            // Only show Contact Student when a real item ID and owner ID exist.
+            const validItemId = itemId !== null && itemId !== "";
+            const validOwnerId = ownerId !== null && ownerId !== "" &&
+                Number.isFinite(Number(ownerId));
+
+            if (validItemId && validOwnerId) {
+                const contactButton = createTextElement("button", "button contact-button", "💬 Contact Student");
+                contactButton.type = "button";
+                contactButton.addEventListener("click", () => openChat(item, title));
+                card.appendChild(contactButton);
+            } else {
+                card.appendChild(createTextElement(
+                    "p", "chat-status",
+                    "Messaging unavailable for this item because owner information is missing."
+                ));
+            }
+
+            itemsGrid.appendChild(card);
+        });
+    }
+
+    function filterItems() {
+        const query = searchInput.value.trim().toLowerCase();
+
+        const filteredItems = allItems.filter(item => {
+            const listingType = String(getItemValue(item, ["listingType"]) || "DONATE").toUpperCase();
+            const searchableText = [
+                getItemValue(item, ["title", "name", "itemName"]),
+                getItemValue(item, ["category"]),
+                getItemValue(item, ["description", "details"]),
+                getItemValue(item, ["itemCondition"]),
+                getItemValue(item, ["exchangeFor"]),
+                listingType
+            ].join(" ").toLowerCase();
+
+            return searchableText.includes(query) &&
+                (activeFilter === "ALL" || listingType === activeFilter);
+        });
+
+        displayItems(filteredItems);
+    }
+
+    async function loadItems() {
+        message.textContent = "Loading items...";
+        message.classList.remove("error");
+        message.style.display = "block";
+        itemsGrid.replaceChildren();
+
+        try {
+            const response = await fetch("/api/items", {
+                method: "GET",
+                credentials: "same-origin",
+                cache: "no-store"
+            });
+
+            if (!response.ok) throw new Error("Unable to load items.");
+
+            const data = await response.json();
+            if (!Array.isArray(data)) throw new Error("Unexpected server response.");
+
+            allItems = data;
+            filterItems();
+        } catch (_) {
+            message.textContent = "Unable to load items. Check that ReBook is running, then click Refresh.";
+            message.classList.add("error");
+            message.style.display = "block";
+        }
+    }
+
+    async function openChat(item, title) {
+        const itemId = getItemValue(item, ["id"]);
+        const ownerId = Number(getItemValue(item, ["ownerId", "owner_id"]));
+
+        if (itemId === null || itemId === "" ||
+            !Number.isFinite(ownerId)) {
+            alert("This item is missing its owner information.");
+            return;
+        }
+
+        if (currentUserId !== null && Number(currentUserId) === ownerId) {
+            alert("This is your own listing.");
+            return;
+        }
+
+        currentItem = item;
+        document.getElementById("chatTitle").textContent = "Chat about: " + title;
+        chatMessages.replaceChildren();
+        chatStatus.textContent = "Loading conversation...";
+        chatStatus.className = "chat-status";
+        chatModal.classList.add("open");
+        chatInput.value = "";
+
+        await loadConversation();
+        chatInput.focus();
+    }
+
+    async function loadConversation() {
+        if (!currentItem) return;
+
+        const itemId = getItemValue(currentItem, ["id"]);
+        const ownerId = Number(getItemValue(currentItem, ["ownerId", "owner_id"]));
+
+        try {
+            const response = await fetch(
+                "/api/messages?itemId=" + encodeURIComponent(itemId) +
+                "&otherUserId=" + encodeURIComponent(ownerId),
+                { credentials: "same-origin", cache: "no-store" }
+            );
+
+            if (response.status === 401) {
+                chatStatus.textContent = "Please log in before messaging a student.";
+                chatStatus.className = "chat-status error";
+                return;
+            }
+
+            if (!response.ok) throw new Error("Could not load the conversation.");
+
+            const messages = await response.json();
+            chatMessages.replaceChildren();
+
+            if (!Array.isArray(messages) || messages.length === 0) {
+                chatMessages.appendChild(createTextElement("p", "message", "No messages yet. Say hello!"));
+            } else {
+                messages.forEach(msg => {
+                    const senderId = Number(msg.senderId);
+                    const mine = currentUserId !== null
+                        ? senderId === Number(currentUserId)
+                        : senderId !== ownerId;
+
+                    const bubble = createTextElement(
+                        "div", "chat-message " + (mine ? "mine" : "theirs"),
+                        String(msg.content || "")
+                    );
+
+                    const time = formatDate(msg.sentAt);
+                    if (time) bubble.appendChild(createTextElement("small", "", (mine ? "You" : "Student") + " · " + time));
+                    chatMessages.appendChild(bubble);
+                });
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            chatStatus.textContent = "";
+        } catch (_) {
+            chatStatus.textContent = "Unable to load messages. Please try again.";
+            chatStatus.className = "chat-status error";
+        }
+    }
+
+    document.getElementById("chatForm").addEventListener("submit", async event => {
+        event.preventDefault();
+        if (!currentItem) return;
+
+        const content = chatInput.value.trim();
+        if (!content) {
+            chatStatus.textContent = "Please type a message first.";
+            return;
+        }
+
+        sendButton.disabled = true;
+        chatStatus.textContent = "Sending message...";
+
+        try {
+            const response = await fetch("/api/messages", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    itemId: getItemValue(currentItem, ["id"]),
+                    content
+                })
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (response.status === 401) {
+                chatStatus.textContent = "Please log in before sending a message.";
+                chatStatus.className = "chat-status error";
+                return;
+            }
+
+            if (!response.ok) throw new Error(result.message || "Message could not be sent.");
+
+            chatInput.value = "";
+            chatStatus.textContent = "Message sent!";
+            chatStatus.className = "chat-status success";
+            await loadConversation();
+        } catch (error) {
+            chatStatus.textContent = error.message || "Unable to send message.";
+            chatStatus.className = "chat-status error";
+        } finally {
+            sendButton.disabled = false;
+        }
+    });
+
+    function closeChat() {
+        chatModal.classList.remove("open");
+        currentItem = null;
+    }
+
+    document.getElementById("closeChat").addEventListener("click", closeChat);
+    chatModal.addEventListener("click", event => {
+        if (event.target === chatModal) closeChat();
+    });
+    document.addEventListener("keydown", event => {
+        if (event.key === "Escape") closeChat();
+    });
+
+    searchInput.addEventListener("input", filterItems);
+
+    document.querySelectorAll("[data-filter]").forEach(button => {
+        button.addEventListener("click", () => {
+            activeFilter = button.dataset.filter;
+            document.querySelectorAll("[data-filter]").forEach(filterButton => {
+                filterButton.classList.toggle("active", filterButton === button);
+            });
+            filterItems();
+        });
+    });
+
+    document.getElementById("refreshButton").addEventListener("click", loadItems);
+
+    loadCurrentUser();
+    loadItems();
+</script>
+</body>
+</html>

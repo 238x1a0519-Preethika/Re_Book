@@ -1,0 +1,366 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ReBook | Student Dashboard</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f7fb;
+            color: #243047;
+        }
+
+        header {
+            background: #173b65;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        nav {
+            display: flex;
+            gap: 18px;
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        main {
+            max-width: 1100px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .welcome {
+            background: white;
+            padding: 28px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px #152b4610;
+            margin-bottom: 25px;
+        }
+
+        .welcome h2 {
+            margin: 0 0 8px;
+            color: #173b65;
+        }
+
+        .welcome p {
+            color: #64748b;
+            margin-bottom: 0;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 11px 17px;
+            background: #2463a6;
+            color: white;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .button.secondary {
+            background: #e7eef7;
+            color: #173b65;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 22px;
+            box-shadow: 0 3px 12px #152b4610;
+        }
+
+        .stat-card p {
+            margin: 0 0 12px;
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .stat-card h3 {
+            margin: 0;
+            font-size: 30px;
+            color: #173b65;
+        }
+
+        .section {
+            background: white;
+            padding: 24px;
+            border-radius: 14px;
+            box-shadow: 0 3px 12px #152b4610;
+            margin-bottom: 24px;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            color: #173b65;
+        }
+
+        #itemsList {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .item-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 17px;
+        }
+
+        .item-card h3 {
+            margin: 0 0 8px;
+        }
+
+        .item-card p {
+            margin: 6px 0;
+            color: #64748b;
+            font-size: 14px;
+            overflow-wrap: anywhere;
+        }
+
+        .empty {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        #status {
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            text-align: center;
+            color: #64748b;
+            font-size: 13px;
+            padding: 25px;
+        }
+
+        @media (max-width: 700px) {
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            #itemsList {
+                grid-template-columns: 1fr;
+            }
+
+            main {
+                margin-top: 20px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <h1>ReBook</h1>
+
+    <nav>
+        <a href="dashboard.html">Dashboard</a>
+        <a href="list-item.html">Browse Items</a>
+        <a href="add-book.html">Add Item</a>
+        <a href="profile.html">My Profile</a>
+    </nav>
+</header>
+
+<main>
+    <section class="welcome">
+        <h2 id="welcomeTitle">Welcome to ReBook!</h2>
+        <p>Your student marketplace for donating, exchanging, and selling books and supplies.</p>
+
+        <div class="actions">
+            <a class="button" href="add-book.html">+ Add an Item</a>
+            <a class="button secondary" href="list-item.html">Browse Marketplace</a>
+            <a class="button secondary" href="profile.html">View Profile</a>
+        </div>
+    </section>
+
+    <section class="stats">
+        <div class="stat-card">
+            <p>All Listings</p>
+            <h3 id="totalCount">—</h3>
+        </div>
+
+        <div class="stat-card">
+            <p>Donate</p>
+            <h3 id="donateCount">—</h3>
+        </div>
+
+        <div class="stat-card">
+            <p>Exchange</p>
+            <h3 id="exchangeCount">—</h3>
+        </div>
+
+        <div class="stat-card">
+            <p>Sell</p>
+            <h3 id="sellCount">—</h3>
+        </div>
+    </section>
+
+    <section class="section">
+        <h2>Recently Listed Items</h2>
+        <p id="status">Loading marketplace items...</p>
+        <div id="itemsList"></div>
+    </section>
+</main>
+
+<footer>
+    ReBook — Give books another chapter.
+</footer>
+
+<script>
+    async function loadDashboard() {
+        const status = document.getElementById("status");
+        const itemsList = document.getElementById("itemsList");
+
+        try {
+            const profileResponse = await fetch("/api/profile", {
+                credentials: "include"
+            });
+
+            if (profileResponse.status === 401 ||
+                profileResponse.status === 403) {
+                document.getElementById("welcomeTitle").textContent =
+                    "Welcome to ReBook!";
+            } else if (profileResponse.ok) {
+                const profile = await profileResponse.json();
+                const name = profile.fullName || profile.full_name ||
+                    profile.name || "Student";
+
+                document.getElementById("welcomeTitle").textContent =
+                    "Welcome, " + name + "!";
+            }
+
+            const response = await fetch("/api/items", {
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                throw new Error("Could not load marketplace items.");
+            }
+
+            const items = await response.json();
+
+            if (!Array.isArray(items)) {
+                throw new Error("Unexpected item data received.");
+            }
+
+            const getValue = (item, keys) => {
+                for (const key of keys) {
+                    if (item[key] !== undefined && item[key] !== null) {
+                        return item[key];
+                    }
+                }
+                return "";
+            };
+
+            const normalizeType = item =>
+                String(getValue(item, ["listingType", "listing_type"]))
+                    .trim().toUpperCase();
+
+            document.getElementById("totalCount").textContent =
+                items.length;
+
+            document.getElementById("donateCount").textContent =
+                items.filter(item => normalizeType(item) === "DONATE").length;
+
+            document.getElementById("exchangeCount").textContent =
+                items.filter(item => normalizeType(item) === "EXCHANGE").length;
+
+            document.getElementById("sellCount").textContent =
+                items.filter(item => normalizeType(item) === "SELL").length;
+
+            itemsList.replaceChildren();
+
+            const recentItems = [...items].reverse().slice(0, 6);
+
+            if (recentItems.length === 0) {
+                status.textContent = "No items have been listed yet.";
+                return;
+            }
+
+            status.textContent = "Showing the latest " +
+                recentItems.length + " marketplace item(s).";
+
+            recentItems.forEach(item => {
+                const card = document.createElement("article");
+                card.className = "item-card";
+
+                const title = document.createElement("h3");
+                title.textContent =
+                    getValue(item, ["title"]) || "Untitled item";
+
+                const type = document.createElement("p");
+                type.textContent = "Listing type: " +
+                    (normalizeType(item) || "Not specified");
+
+                const category = document.createElement("p");
+                category.textContent = "Category: " +
+                    (getValue(item, ["category"]) || "Not specified");
+
+                const condition = document.createElement("p");
+                condition.textContent = "Condition: " +
+                    (getValue(item, ["itemCondition", "item_condition"]) ||
+                     "Not specified");
+
+                card.append(title, type, category, condition);
+                itemsList.appendChild(card);
+            });
+
+        } catch (error) {
+            status.textContent =
+                "Could not load dashboard data. Please check that ReBook is running and try again.";
+            console.error("Dashboard error:", error);
+        }
+    }
+
+    loadDashboard();
+</script>
+</body>
+</html>

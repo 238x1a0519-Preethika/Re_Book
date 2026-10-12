@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | ReBook</title>
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        .login-container {
+            max-width: 420px;
+            margin: 60px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
+        }
+
+        .login-container h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .login-container .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        .login-container label {
+            display: block;
+            margin: 14px 0 6px;
+        }
+
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 7px;
+            box-sizing: border-box;
+        }
+
+        .login-container button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 22px;
+            border: none;
+            border-radius: 7px;
+            background: #2447a5;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .login-container button:hover {
+            background: #193783;
+        }
+
+        #message {
+            margin-top: 16px;
+            text-align: center;
+        }
+
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+           }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <nav>
+            <a href="index.html">ReBook</a>
+            <a href="list-item.html">Browse Books</a>
+            <a href="add-book.html">Add a Book</a>
+            <a href="register.html">Register</a>
+        </nav>
+    </header>
+
+    <main class="login-container">
+        <h1>Welcome Back!</h1>
+        <p class="subtitle">Login to your ReBook account</p>
+
+        <form id="loginForm">
+            <label for="email">Email Address</label>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your registered email"
+                autocomplete="email"
+                required
+            >
+
+            <label for="password">Password</label>
+            <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter your password"
+                autocomplete="current-password"
+                required
+            >
+
+            <button type="submit" id="loginButton">Login</button>
+        </form>
+
+        <p id="message" role="status" aria-live="polite"></p>
+
+        <p class="register-link">
+            Don't have an account?
+            <a href="register.html">Register here</a>
+        </p>
+    </main>
+
+    <script>
+        const loginForm = document.getElementById("loginForm");
+        const message = document.getElementById("message");
+        const loginButton = document.getElementById("loginButton");
+
+        loginForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            message.textContent = "";
+            loginButton.disabled = true;
+            loginButton.textContent = "Logging in...";
+
+            const email = document.getElementById("email").value.trim();
+            const password = document.getElementById("password").value;
+
+            try {
+                const response = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        email: email,
+                        password: password
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    message.style.color = "green";
+                    message.textContent =
+                        data.message || "Login successful!";
+
+                    setTimeout(function () {
+                        window.location.href = "/profile.html";
+                    }, 1000);
+                } else {
+                    message.style.color = "red";
+                    message.textContent =
+                        data.message || "Invalid email or password.";
+
+                    loginButton.disabled = false;
+                    loginButton.textContent = "Login";
+                }
+            } catch (error) {
+                message.style.color = "red";
+                message.textContent =
+                    "Unable to connect to ReBook. Please try again.";
+
+                loginButton.disabled = false;
+                loginButton.textContent = "Login";
+            }
+        });
+    </script>
+
+</body>
+</html>
+

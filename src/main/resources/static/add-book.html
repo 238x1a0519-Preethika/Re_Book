@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add an Item - ReBook</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 24px;
+            font-family: Arial, sans-serif;
+            background: #f3f6fb;
+            color: #263238;
+        }
+
+        .container {
+            max-width: 620px;
+            margin: 20px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 14px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+        }
+
+        h1 {
+            margin-top: 0;
+            color: #246b50;
+            text-align: center;
+        }
+
+        .subtitle {
+            margin-bottom: 25px;
+            color: #667085;
+            text-align: center;
+        }
+
+        label {
+            display: block;
+            margin-top: 16px;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            font-size: 15px;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 6px;
+            color: #667085;
+            font-size: 13px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 24px;
+            padding: 13px;
+            border: none;
+            border-radius: 7px;
+            background: #246b50;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #19543d;
+        }
+
+        .back-link {
+            display: block;
+            margin-top: 18px;
+            color: #246b50;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        #message {
+            margin-top: 18px;
+            text-align: center;
+            font-weight: bold;
+            overflow-wrap: anywhere;
+        }
+
+        .success {
+            color: #187443;
+        }
+
+        .error {
+            color: #c62828;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Add an Item</h1>
+    <p class="subtitle">Give your books and study materials a new life!</p>
+
+    <form id="itemForm">
+        <label for="title">Item Title *</label>
+        <input
+            type="text"
+            id="title"
+            name="title"
+            placeholder="e.g. Engineering Mathematics Textbook"
+            required
+            maxlength="200"
+        >
+
+        <label for="category">Category *</label>
+        <select id="category" name="category" required>
+            <option value="">Choose a category</option>
+            <option value="Books">Books</option>
+            <option value="Notes">Notes</option>
+            <option value="Lab Equipment">Lab Equipment</option>
+            <option value="Stationery">Stationery</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="itemCondition">Item Condition *</label>
+        <select id="itemCondition" name="itemCondition" required>
+            <option value="">Choose condition</option>
+            <option value="New">New</option>
+            <option value="Like New">Like New</option>
+            <option value="Good">Good</option>
+            <option value="Acceptable">Acceptable</option>
+        </select>
+
+        <label for="listingType">What would you like to do? *</label>
+        <select id="listingType" name="listingType" required>
+            <option value="">Choose an option</option>
+            <option value="DONATE">Donate for free</option>
+            <option value="EXCHANGE">Exchange for another item</option>
+            <option value="SELL">Sell for money</option>
+        </select>
+
+        <div id="priceGroup" class="hidden">
+            <label for="price">Selling Price (₹) *</label>
+            <input
+                type="number"
+                id="price"
+                name="price"
+                min="0.01"
+                max="1000000"
+                step="0.01"
+                placeholder="e.g. 250"
+            >
+            <span class="hint">Enter the price in Indian rupees.</span>
+        </div>
+
+        <div id="exchangeGroup" class="hidden">
+            <label for="exchangeFor">What would you like in exchange? *</label>
+            <input
+                type="text"
+                id="exchangeFor"
+                name="exchangeFor"
+                maxlength="500"
+                placeholder="e.g. A second-year CSE textbook"
+            >
+        </div>
+
+        <label for="description">Description</label>
+        <textarea
+            id="description"
+            name="description"
+            maxlength="1000"
+            placeholder="Describe the item, its condition, edition, or any other useful details."
+        ></textarea>
+
+        <button type="submit" id="submitButton">Add Item to ReBook</button>
+    </form>
+
+    <p id="message" role="status" aria-live="polite"></p>
+
+    <a class="back-link" href="list-item.html">View Available Items</a>
+    <a class="back-link" href="profile.html">Back to My Profile</a>
+</div>
+
+<script>
+    const form = document.getElementById("itemForm");
+    const listingType = document.getElementById("listingType");
+    const priceGroup = document.getElementById("priceGroup");
+    const exchangeGroup = document.getElementById("exchangeGroup");
+    const priceInput = document.getElementById("price");
+    const exchangeInput = document.getElementById("exchangeFor");
+    const message = document.getElementById("message");
+    const submitButton = document.getElementById("submitButton");
+
+    function updateListingFields() {
+        const type = listingType.value;
+
+        priceGroup.classList.toggle("hidden", type !== "SELL");
+        exchangeGroup.classList.toggle("hidden", type !== "EXCHANGE");
+
+        priceInput.required = type === "SELL";
+        exchangeInput.required = type === "EXCHANGE";
+
+        if (type !== "SELL") {
+            priceInput.value = "";
+        }
+
+        if (type !== "EXCHANGE") {
+            exchangeInput.value = "";
+        }
+    }
+
+    listingType.addEventListener("change", updateListingFields);
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        message.textContent = "";
+        message.className = "";
+
+        const type = listingType.value;
+        const priceValue = priceInput.value.trim();
+
+        if (type === "SELL" &&
+            (!priceValue || Number(priceValue) <= 0)) {
+            message.textContent = "Please enter a selling price greater than ₹0.";
+            message.className = "error";
+            return;
+        }
+
+        if (type === "EXCHANGE" && !exchangeInput.value.trim()) {
+            message.textContent = "Please describe what you want in exchange.";
+            message.className = "error";
+            return;
+        }
+
+        const item = {
+            title: document.getElementById("title").value.trim(),
+            category: document.getElementById("category").value,
+            itemCondition: document.getElementById("itemCondition").value,
+            listingType: type,
+            price: type === "SELL" ? Number(priceValue) : null,
+            exchangeFor: type === "EXCHANGE"
+                ? exchangeInput.value.trim()
+                : null,
+            description: document.getElementById("description").value.trim()
+        };
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Adding Item...";
+
+        try {
+            const response = await fetch("/api/items", {
+                method: "POST",
+                credentials: "same-origin",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(item)
+            });
+
+            const result = await response.json().catch(() => ({}));
+
+            if (response.status === 401) {
+                message.textContent =
+                    "Please log in first, then try adding your item again.";
+                message.className = "error";
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error(result.message || "Could not add the item.");
+            }
+
+            message.textContent = "Item added successfully!";
+            message.className = "success";
+
+            form.reset();
+            updateListingFields();
+
+        } catch (error) {
+            message.textContent =
+                error.message || "Something went wrong. Please try again.";
+            message.className = "error";
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = "Add Item to ReBook";
+        }
+    });
+
+    updateListingFields();
+</script>
+</body>
+</html>

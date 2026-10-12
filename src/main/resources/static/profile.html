@@ -1,0 +1,398 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | ReBook</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #243047;
+        }
+
+        nav {
+            background: #243b55;
+            color: white;
+            padding: 18px 7%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: bold;
+            color: white;
+            text-decoration: none;
+        }
+
+        nav .links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: center;
+        }
+
+        nav .links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        nav .links a:hover {
+            color: #a7f3d0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .heading {
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            font-size: 30px;
+            margin-bottom: 8px;
+        }
+
+        .heading p {
+            color: #64748b;
+        }
+
+        .profile-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.06);
+            margin-bottom: 25px;
+        }
+
+        .avatar {
+            width: 85px;
+            height: 85px;
+            border-radius: 50%;
+            background: #dbeafe;
+            color: #1d4ed8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 34px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .profile-card h2 {
+            margin-bottom: 8px;
+        }
+
+        .profile-card p {
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        .details {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .detail {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 10px;
+            overflow-wrap: anywhere;
+        }
+
+        .detail .label {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 7px;
+        }
+
+        .detail .value {
+            color: #243047;
+            font-weight: bold;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: inline-block;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 18px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #243047;
+        }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .message {
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            display: none;
+            line-height: 1.5;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px 15px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        @media (max-width: 600px) {
+            nav {
+                padding: 16px 5%;
+            }
+
+            nav .links {
+                gap: 12px;
+            }
+
+            .container {
+                margin: 25px auto;
+            }
+
+            .profile-card {
+                padding: 22px;
+            }
+
+            .details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<nav>
+    <a class="logo" href="dashboard.html">ReBook</a>
+
+    <div class="links">
+        <a href="dashboard.html">Dashboard</a>
+        <a href="list-item.html">Browse Items</a>
+        <a href="add-book.html">Add Item</a>
+        <a href="profile.html">My Profile</a>
+    </div>
+</nav>
+
+<main class="container">
+
+    <div class="heading">
+        <h1>My Profile</h1>
+        <p>Manage your student account on ReBook.</p>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <section class="profile-card">
+        <div class="avatar" id="avatar">S</div>
+
+        <h2 id="studentName">Loading profile...</h2>
+        <p id="studentEmail">Please wait while we load your account details.</p>
+
+        <div class="details">
+            <div class="detail">
+                <div class="label">Full Name</div>
+                <div class="value" id="fullName">Loading...</div>
+            </div>
+
+            <div class="detail">
+                <div class="label">Email Address</div>
+                <div class="value" id="emailAddress">Loading...</div>
+            </div>
+
+            <div class="detail">
+                <div class="label">Account</div>
+                <div class="value">Student</div>
+            </div>
+
+            <div class="detail">
+                <div class="label">Platform</div>
+                <div class="value">ReBook Marketplace</div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <a class="btn btn-primary" href="dashboard.html">
+                Go to Dashboard
+            </a>
+
+            <a class="btn btn-secondary" href="list-item.html">
+                Browse Items
+            </a>
+
+            <a class="btn btn-secondary" href="add-book.html">
+                Add an Item
+            </a>
+
+            <button class="btn btn-danger" id="logoutButton" type="button">
+                Logout
+            </button>
+        </div>
+    </section>
+
+</main>
+
+<footer>
+    © 2026 ReBook — Reuse, Exchange, and Share.
+</footer>
+
+<script>
+    async function loadProfile() {
+        const message = document.getElementById("message");
+
+        try {
+            const response = await fetch("/api/profile", {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Accept": "application/json"
+                }
+            });
+
+            if (response.status === 401 || response.status === 403) {
+                showMessage(
+                    "Please log in to view your profile.",
+                    "info"
+                );
+                return;
+            }
+
+            if (!response.ok) {
+                throw new Error("Profile request failed: " + response.status);
+            }
+
+            const data = await response.json();
+
+            const name =
+                data.fullName ||
+                data.name ||
+                data.username ||
+                "Student";
+
+            const email = data.email || "Email not available";
+
+            document.getElementById("studentName").textContent = name;
+            document.getElementById("studentEmail").textContent = email;
+            document.getElementById("fullName").textContent = name;
+            document.getElementById("emailAddress").textContent = email;
+
+            document.getElementById("avatar").textContent =
+                name.trim().charAt(0).toUpperCase() || "S";
+
+            message.style.display = "none";
+
+        } catch (error) {
+            console.error("Unable to load profile:", error);
+
+            document.getElementById("studentName").textContent =
+                "Student Profile";
+
+            document.getElementById("studentEmail").textContent =
+                "Your account details could not be loaded.";
+
+            document.getElementById("fullName").textContent =
+                "Unavailable";
+
+            document.getElementById("emailAddress").textContent =
+                "Unavailable";
+
+            showMessage(
+                "We couldn't load your profile information. Please check that you are logged in and that your profile API is working.",
+                "error"
+            );
+        }
+    }
+
+    function showMessage(text, type) {
+        const message = document.getElementById("message");
+        message.textContent = text;
+        message.className = "message " + type;
+        message.style.display = "block";
+    }
+
+    document.getElementById("logoutButton").addEventListener("click", () => {
+        const confirmed = confirm("Are you sure you want to log out?");
+
+        if (!confirmed) {
+            return;
+        }
+
+        /*
+         * Replace this with your actual logout endpoint if your
+         * backend uses a different route.
+         */
+        fetch("/api/auth/logout", {
+            method: "POST",
+            credentials: "include"
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = "login.html";
+            } else {
+                alert(
+                    "Logout endpoint is not configured yet. " +
+                    "Please check your backend logout route."
+                );
+            }
+        })
+        .catch(error => {
+            console.error("Logout failed:", error);
+            alert("Could not contact the server. Please try again.");
+        });
+    });
+
+    loadProfile();
+</script>
+
+</body>
+</html>
